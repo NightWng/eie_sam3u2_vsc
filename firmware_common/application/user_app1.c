@@ -92,6 +92,21 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
+  /* All discrete LEDs to off */
+  LedOff(WHITE);
+  LedOff(PURPLE);
+  LedOff(BLUE);
+  LedOff(CYAN);
+  LedOff(GREEN);
+  LedOff(YELLOW);
+  LedOff(ORANGE);
+  LedOff(RED);
+
+  /* Backlight to White */
+  LedOn(LCD_RED);
+  LedOn(LCD_GREEN);
+  LedOn(LCD_BLUE);
+
   /* If good initialization, set state to Idle */
   if( 1 )
   {
@@ -140,6 +155,74 @@ State Machine Function Definitions
 /* What does this state do? */
 static void UserApp1SM_Idle(void)
 {
+  static u16 u16BlinkCount = 0;
+  static u8 u8Counter = 0;
+
+  u16BlinkCount++;
+
+  if(u16BlinkCount == 250)
+  {
+    LedToggle(PURPLE);
+    u16BlinkCount = 0;
+
+    /* Update the counter and roll at 16
+    Since we are simulating a 4 bit counter */
+
+    /* Theres no u4 because a byte is 8 bits and the lowest unit for a piece of memory is 1 byte (8 bits)*/
+    u8Counter++;
+    if(u8Counter == 16)
+    {
+      u8Counter = 0;
+    }
+
+    /* Parse the current count to set the LEDs.
+    G Y O R
+    3 2 1 0
+    
+    LSB from the right. We need to set if conditions for each mask
+    which will do an and operation with it's corresponding bit to determine
+    if that bit should be on or off.
+    
+    The '0x01' notation is to denote a binary number with a maximum of 8 bits*/
+
+    if(u8Counter & 0x01)
+    {
+      LedOn(RED);
+    }
+    else
+    {
+      LedOff(RED);
+    }
+
+    if(u8Counter & 0x2)
+    {
+      LedOn(ORANGE);
+    }
+    else
+    {
+      LedOff(ORANGE);
+    }
+
+    if(u8Counter & 0x03)
+    {
+      LedOn(YELLOW);
+    }
+    else
+    {
+      LedOff(YELLOW);
+    }
+
+    if(u8Counter & 0x04)
+    {
+      LedOn(GREEN);
+    }
+    else
+    {
+      LedOff(GREEN);
+    }
+
+  } /* end if(u16BlinkCount == 250) */
+
      
 } /* end UserApp1SM_Idle() */
      
